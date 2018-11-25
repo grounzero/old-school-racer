@@ -149,6 +149,9 @@ protected:
 				float fPerspective = (float)y / (ScreenHeight()/2.0f);
 				float fRoadWidth = 0.1f + fPerspective * 0.8f; // Min 10% Max 90%
 				float fClipWidth = fRoadWidth * 0.15f;
+
+				float fCentreLineWidth = fRoadWidth * 0.01f;
+
 				fRoadWidth *= 0.5f;	// Halve it as track is symmetrical around center of track, but offset...
 
 				// ...depending on where the middle point is, which is defined by the current
@@ -158,6 +161,8 @@ protected:
 				// Work out segment boundaries
 				int nLeftGrass = (fMiddlePoint - fRoadWidth - fClipWidth) * ScreenWidth();
 				int nLeftClip = (fMiddlePoint - fRoadWidth) * ScreenWidth();
+				int nCentreLineLeft = (fMiddlePoint - fCentreLineWidth) * ScreenWidth();
+				int nCentreLineRight = (fMiddlePoint + fCentreLineWidth) * ScreenWidth();
 				int nRightClip = (fMiddlePoint + fRoadWidth) * ScreenWidth();
 				int nRightGrass = (fMiddlePoint + fRoadWidth + fClipWidth) * ScreenWidth();
 				
@@ -167,16 +172,21 @@ protected:
 				// by the distance around the track. These take some fine tuning to give the right "feel"
 				int nGrassColour = sinf(20.0f *  powf(1.0f - fPerspective,3) + fDistance * 0.1f) > 0.0f ? FG_GREEN : FG_DARK_GREEN;
 				int nClipColour = sinf(60.0f *  powf(1.0f - fPerspective, 2) + fDistance) > 0.0f ? FG_RED : FG_WHITE;
-				
+
+				int nCentreLineColour = sinf(60.0f *  powf(1.0f - fPerspective, 2) + fDistance) > 0.0f ? FG_DARK_GREY : FG_WHITE;
 				// Start finish straight changes the road colour to inform the player lap is reset
-				int nRoadColour = (nTrackSection-1) == 0 ? FG_WHITE : FG_GREY;
+				int nRoadColour = (nTrackSection-1) == 0 ? FG_GREY: FG_DARK_GREY;
 
 				// Draw the row segments
 				if (x >= 0 && x < nLeftGrass)
 					Draw(x, nRow, PIXEL_SOLID, nGrassColour);
 				if (x >= nLeftGrass && x < nLeftClip)
 					Draw(x, nRow, PIXEL_SOLID, nClipColour);
-				if (x >= nLeftClip && x < nRightClip)
+				if (x >= nLeftClip && x < nCentreLineLeft)
+					Draw(x, nRow, PIXEL_SOLID, nRoadColour);
+				if (x >= nCentreLineLeft && x < nCentreLineRight)
+					Draw(x, nRow, PIXEL_SOLID, nCentreLineColour);
+				if (x >= nCentreLineRight && x < nRightClip)
 					Draw(x, nRow, PIXEL_SOLID, nRoadColour);
 				if (x >= nRightClip && x < nRightGrass)
 					Draw(x, nRow, PIXEL_SOLID, nClipColour);
@@ -194,33 +204,33 @@ protected:
 		switch (nCarDirection)
 		{
 		case 0:
-			DrawStringAlpha(nCarPos, 80, L"   ||####||   ");
-			DrawStringAlpha(nCarPos, 81, L"      ##      ");
-			DrawStringAlpha(nCarPos, 82, L"     ####     ");
-			DrawStringAlpha(nCarPos, 83, L"     ####     ");
-			DrawStringAlpha(nCarPos, 84, L"|||  ####  |||");
-			DrawStringAlpha(nCarPos, 85, L"|||########|||");
-			DrawStringAlpha(nCarPos, 86, L"|||  ####  |||");
+			DrawStringAlpha(nCarPos, 160, L"   ||####||   ");
+			DrawStringAlpha(nCarPos, 161, L"      ##      ");
+			DrawStringAlpha(nCarPos, 162, L"     ####     ");
+			DrawStringAlpha(nCarPos, 163, L"     ####     ");
+			DrawStringAlpha(nCarPos, 164, L"|||  ####  |||");
+			DrawStringAlpha(nCarPos, 165, L"|||########|||");
+			DrawStringAlpha(nCarPos, 166, L"|||  ####  |||");
 			break;
 
 		case +1:
-			DrawStringAlpha(nCarPos, 80, L"      //####//");
-			DrawStringAlpha(nCarPos, 81, L"         ##   ");
-			DrawStringAlpha(nCarPos, 82, L"       ####   ");
-			DrawStringAlpha(nCarPos, 83, L"      ####    ");
-			DrawStringAlpha(nCarPos, 84, L"///  ####//// ");
-			DrawStringAlpha(nCarPos, 85, L"//#######///O ");
-			DrawStringAlpha(nCarPos, 86, L"/// #### //// ");
+			DrawStringAlpha(nCarPos, 160, L"      //####//");
+			DrawStringAlpha(nCarPos, 161, L"         ##   ");
+			DrawStringAlpha(nCarPos, 162, L"       ####   ");
+			DrawStringAlpha(nCarPos, 163, L"      ####    ");
+			DrawStringAlpha(nCarPos, 164, L"///  ####//// ");
+			DrawStringAlpha(nCarPos, 165, L"//#######///O ");
+			DrawStringAlpha(nCarPos, 166, L"/// #### //// ");
 			break;
 
 		case -1:
-			DrawStringAlpha(nCarPos, 80, L"\\\\####\\\\      ");
-			DrawStringAlpha(nCarPos, 81, L"   ##         ");
-			DrawStringAlpha(nCarPos, 82, L"   ####       ");
-			DrawStringAlpha(nCarPos, 83, L"    ####      ");
-			DrawStringAlpha(nCarPos, 84, L" \\\\\\\\####  \\\\\\");
-			DrawStringAlpha(nCarPos, 85, L" O\\\\\\#######\\\\");
-			DrawStringAlpha(nCarPos, 86, L" \\\\\\\\ #### \\\\\\");
+			DrawStringAlpha(nCarPos, 160, L"\\\\####\\\\      ");
+			DrawStringAlpha(nCarPos, 161, L"   ##         ");
+			DrawStringAlpha(nCarPos, 162, L"   ####       ");
+			DrawStringAlpha(nCarPos, 163, L"    ####      ");
+			DrawStringAlpha(nCarPos, 164, L" \\\\\\\\####  \\\\\\");
+			DrawStringAlpha(nCarPos, 165, L" O\\\\\\#######\\\\");
+			DrawStringAlpha(nCarPos, 166, L" \\\\\\\\ #### \\\\\\");
 			break;
 		}
 		
@@ -259,7 +269,7 @@ int main()
 {
 	// Use olcConsoleGameEngine derived app
 	OldSchoolRacer game;
-	game.ConstructConsole(160, 100, 8, 8);
+	game.ConstructConsole(320, 200, 4, 4);
 	game.Start();
 
 	return 0;
